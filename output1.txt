@@ -1,0 +1,5 @@
+New_York is not eliminated
+Baltimore is not eliminated
+Boston is not eliminated
+Toronto is not eliminated
+Detroit is eliminated by the subset R = ['New_York', 'Baltimore', 'Boston', 'Toronto']

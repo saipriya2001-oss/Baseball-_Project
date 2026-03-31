@@ -1,0 +1,5 @@
+1
+A 10 0 0 0
+
+
+Edge Case – Single Team

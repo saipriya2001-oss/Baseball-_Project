@@ -1,0 +1,4 @@
+Atlanta is not eliminated
+Philadelphia is eliminated by the subset R = ['Atlanta', 'New_York']
+New_York is not eliminated
+Montreal is eliminated by the subset R = ['Atlanta']

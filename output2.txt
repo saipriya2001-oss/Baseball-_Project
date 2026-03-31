@@ -1,0 +1,3 @@
+A is not eliminated
+B is eliminated by the subset R = ['A']
+C is eliminated by the subset R = ['A']

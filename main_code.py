@@ -38,9 +38,57 @@ class BaseballElimination:
         return False, []
 
 
+    # =========================================================
+    # 
+    # Focus: The mathematical 'Black Box' that calculates max flow.
+    # =========================================================
+    def bfs(self, capacity, flow, source, sink, parent):
+        """Finds an augmenting path in the residual graph."""
+        visited = set()
+        queue = deque([source])
+        visited.add(source)
 
+        while queue:
+            u = queue.popleft()
+            for v in capacity.get(u, {}):
+                if v not in visited and capacity[u][v] - flow[u][v] > 0:
+                    parent[v] = u
+                    visited.add(v)
+                    queue.append(v)
+                    if v == sink:
+                        return True
+        return False
 
+    def max_flow(self, capacity, source, sink):
+        """Standard Edmonds-Karp implementation."""
+        flow = {u: {v: 0 for v in capacity[u]} for u in capacity}
+        total_flow = 0
+        parent = {}
 
+        while self.bfs(capacity, flow, source, sink, parent):
+            # Find the bottleneck capacity along the path found by BFS
+            path_flow = float('inf')
+            v = sink
+            while v != source:
+                u = parent[v]
+                path_flow = min(path_flow, capacity[u][v] - flow[u][v])
+                v = u
+
+            # Update flow and residual edges
+            v = sink
+            while v != source:
+                u = parent[v]
+                flow[u][v] += path_flow
+                if v not in flow: flow[v] = {}
+                if u not in flow[v]: flow[v][u] = 0
+                flow[v][u] -= path_flow
+                v = u
+            total_flow += path_flow
+
+        return total_flow, flow
+
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 
 
