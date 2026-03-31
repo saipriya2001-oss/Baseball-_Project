@@ -93,6 +93,27 @@ class BaseballElimination:
 
 
 
+
+
+
+
+
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+def is_eliminated(self, team):
+        """Returns True if the team is mathematically eliminated."""
+        trivial, _ = self.is_trivial(team)
+        if trivial: return True
+
+        capacity, source, sink, _ = self.build_graph(team)
+        total_games_possible = sum(capacity[source].values())
+        flow_value, _ = self.max_flow(capacity, source, sink)
+
+        # If we couldn't fit all the remaining games into the flow, the team is out.
+        return flow_value != total_games_possible
+
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 if __name__ == "__main__":
     n = int(input("Enter number of teams: "))
     data = [input().split() for _ in range(n)]
