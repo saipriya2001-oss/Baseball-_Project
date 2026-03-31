@@ -18,3 +18,57 @@ Outputs whether the team is eliminated and, if so, identifies the subset of team
 The project demonstrates key concepts from algorithm design, especially graph theory and flow networks, along with practical skills in Python programming, input handling, and modular code structure.
 
 The goal of this project is to provide a computational solution to a real-world sports problem, showing how mathematical modeling and algorithms can be used to make strategic decisions in competitive environments.
+
+
+# ⚾ Baseball Elimination (Max Flow Project)
+
+## 👨‍💻 Team Members
+- Soma (Student B)
+- Priya (Student A)
+
+---
+
+## 📌 Project Description
+This project solves the **Baseball Elimination Problem** using:
+
+- Max Flow (Edmonds-Karp Algorithm)
+- Min Cut (for certificate of elimination)
+
+It determines:
+- Whether a team is eliminated
+- Which subset of teams (R) eliminates it
+
+---
+
+## 🧠 Approach
+
+### 1. Trivial Elimination
+If:
+wins[x] + remaining[x] < wins[i]
+→ Team is eliminated
+
+---
+
+### 2. Non-Trivial Elimination (Flow Network)
+
+Graph Structure:
+- Source → Game Nodes
+- Game Nodes → Team Nodes
+- Team Nodes → Sink
+
+We compute:
+- Max Flow
+- If flow < total games → team eliminated
+
+---
+
+### 3. Certificate of Elimination
+- Use Min-Cut
+- Teams reachable from source form subset R
+
+---
+
+## ▶️ How to Run
+
+```bash
+python ddd.py
