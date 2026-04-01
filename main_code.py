@@ -89,8 +89,8 @@ class BaseballElimination:
 
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
-    =========================================================
-    # PART 3: THE GRAPH ARCHITECT (NETWORK BUILDING)
+   
+    
     # Focus: Translating baseball stats into a flow network.
     # =========================================================
     def build_graph(self, team):
@@ -134,6 +134,34 @@ class BaseballElimination:
 
             # If we couldn't fit all the remaining games into the flow, the team is out.
             return flow_value != total_games_possible
+    
+    def certificate_of_elimination(self, team):
+        """Finds the subset of teams responsible for the elimination."""
+        trivial, by = self.is_trivial(team)
+        if trivial: return by
+
+        capacity, source, sink, others = self.build_graph(team)
+        _, flow = self.max_flow(capacity, source, sink)
+
+        # To find the Min-Cut, find all nodes reachable in the residual graph
+        visited = set()
+        queue = deque([source])
+        while queue:
+            u = queue.popleft()
+            if u in visited: continue
+            visited.add(u)
+            # Forward reachable
+            for v in capacity.get(u, {}):
+                if capacity[u][v] - flow[u][v] > 0 and v not in visited:
+                    queue.append(v)
+            # Backward reachable
+            for v in flow:
+                if u in flow[v] and flow[v][u] > 0 and v not in visited:
+                    queue.append(v)
+
+        # Any team node reachable from source is in the 'Eliminating Subset'
+        return [t for t in others if t in visited]
+
 
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
