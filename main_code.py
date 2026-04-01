@@ -89,28 +89,51 @@ class BaseballElimination:
 
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
+    =========================================================
+    # PART 3: THE GRAPH ARCHITECT (NETWORK BUILDING)
+    # Focus: Translating baseball stats into a flow network.
+    # =========================================================
+    def build_graph(self, team):
+        """Creates the nodes and capacities for the Max-Flow problem."""
+        capacity = {"S": {}}
+        source, sink = "S", "T"
+        max_wins = self.wins[team] + self.remaining[team]
+        others = [t for t in self.teams if t != team]
 
+        # 1. Create Game Nodes (Source -> Game_Node)
+        for i in range(len(others)):
+            for j in range(i + 1, len(others)):
+                t1, t2 = others[i], others[j]
+                game_node = f"{t1}_{t2}"
+                
+                # Capacity is the number of games left between these two teams
+                capacity[source][game_node] = self.games[t1][t2]
+                
+                # Game Node -> Team Nodes (Infinite capacity)
+                capacity[game_node] = {t1: float('inf'), t2: float('inf')}
 
+        # 2. Create Team Nodes (Team -> Sink)
+        for t in others:
+            if t not in capacity: capacity[t] = {}
+            # Capacity is how many more games this team can win without passing our team
+            val = max_wins - self.wins[t]
+            capacity[t][sink] = max(0, val)
 
-
-
-
-
-
+        return capacity, source, sink, others
 
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
-def is_eliminated(self, team):
-        """Returns True if the team is mathematically eliminated."""
-        trivial, _ = self.is_trivial(team)
-        if trivial: return True
+    def is_eliminated(self, team):
+            """Returns True if the team is mathematically eliminated."""
+            trivial, _ = self.is_trivial(team)
+            if trivial: return True
 
-        capacity, source, sink, _ = self.build_graph(team)
-        total_games_possible = sum(capacity[source].values())
-        flow_value, _ = self.max_flow(capacity, source, sink)
+            capacity, source, sink, _ = self.build_graph(team)
+            total_games_possible = sum(capacity[source].values())
+            flow_value, _ = self.max_flow(capacity, source, sink)
 
-        # If we couldn't fit all the remaining games into the flow, the team is out.
-        return flow_value != total_games_possible
+            # If we couldn't fit all the remaining games into the flow, the team is out.
+            return flow_value != total_games_possible
 
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
